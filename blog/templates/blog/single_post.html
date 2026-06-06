@@ -14,7 +14,7 @@
         <h1 class="text-4xl font-bold mb-2">{{ post.title }}</h1>
         <time class="text-sm text-gray-500 block mb-6">{{ post.published_at|date:"Y-m-d" }}</time>
         <article class="prose prose-lg max-w-none">
-            <div class="whitespace-pre-line">{{ post.content }}</div>
+            {{ rendered_content|safe }}
         </article>
     </div>
 </body>
