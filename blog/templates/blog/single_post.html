@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ post.title }} - Secure Blog</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <div class="max-w-2xl mx-auto px-4 py-8">
+        <p class="mb-4">
+            <a href="/" class="text-blue-600 hover:text-blue-800">← Back to homepage</a>
+        </p>
+        <h1 class="text-4xl font-bold mb-2">{{ post.title }}</h1>
+        <time class="text-sm text-gray-500 block mb-6">{{ post.published_at|date:"Y-m-d" }}</time>
+        <article class="prose prose-lg max-w-none">
+            <div class="whitespace-pre-line">{{ post.content }}</div>
+        </article>
+    </div>
+</body>
+</html>
