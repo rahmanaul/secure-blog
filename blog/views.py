@@ -3,6 +3,7 @@ from django.http import Http404
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.utils import timezone
 import random
 from blog.models import Post
 import markdown
@@ -106,3 +107,27 @@ def logout(request):
     """Logout the current user and terminate the session."""
     auth_logout(request)
     return redirect("/login/")
+
+
+@login_required(login_url="/login/")
+def new_post(request):
+    """Create a new blog post."""
+    if request.method == "POST":
+        title = request.POST.get("title")
+        content = request.POST.get("content")
+
+        # Check if saving as draft or publishing
+        if "save_as_draft" in request.POST:
+            # Save as draft - no published_at
+            post = Post.objects.create(title=title, content=content)
+            return redirect("/admin/")
+        elif "publish" in request.POST:
+            # Publish - set published_at
+            post = Post.objects.create(
+                title=title,
+                content=content,
+                published_at=timezone.now()
+            )
+            return redirect("/admin/")
+
+    return render(request, "blog/new_post.html")

@@ -6,7 +6,8 @@
       "Bash(git push *)",
       "Bash(git -C /home/auliarahman/secure-blog remote get-url origin)",
       "Bash(gh issue *)",
-      "Bash(gh label *)"
+      "Bash(gh label *)",
+      "Bash(/home/auliarahman/secure-blog/venv/bin/pip list *)"
     ]
   }
 }
