@@ -1,5 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import Http404
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+import random
 from blog.models import Post
 import markdown
 import bleach
@@ -37,3 +41,68 @@ def single_post(request, post_id):
         "post": post,
         "rendered_content": clean_content,
     })
+
+
+def login(request):
+    """Login page for author authentication."""
+    error = None
+
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            # Valid credentials - generate 2FA code and redirect to 2FA page
+            code = str(random.randint(100000, 999999))
+            request.session["auth_user_id"] = user.id
+            request.session["2fa_code"] = code
+            # TODO: Send code via email
+            return redirect("/2fa/")
+        else:
+            error = "Invalid username or password"
+
+    return render(request, "blog/login.html", {"error": error})
+
+
+def two_factor(request):
+    """Two-factor authentication page."""
+    error = None
+
+    # Check if user has completed step 1
+    user_id = request.session.get("auth_user_id")
+    if not user_id:
+        return redirect("/login/")
+
+    if request.method == "POST":
+        code = request.POST.get("code", "")
+        expected_code = request.session.get("2fa_code")
+
+        if code == expected_code:
+            # Valid 2FA code - log the user in
+            try:
+                user = User.objects.get(id=user_id)
+                auth_login(request, user)
+                # Clear the temporary session data
+                del request.session["auth_user_id"]
+                del request.session["2fa_code"]
+                return redirect("/admin/")
+            except User.DoesNotExist:
+                error = "User not found"
+        else:
+            error = "Invalid 2FA code"
+
+    return render(request, "blog/2fa.html", {"error": error})
+
+
+@login_required(login_url="/login/")
+def admin_dashboard(request):
+    """Admin dashboard for authenticated authors."""
+    return render(request, "blog/admin.html")
+
+
+def logout(request):
+    """Logout the current user and terminate the session."""
+    auth_logout(request)
+    return redirect("/login/")

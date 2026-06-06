@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Secure Blog</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <div class="max-w-md mx-auto px-4 py-16">
+        <h1 class="text-3xl font-bold mb-6">Author Login</h1>
+
+        {% if error %}
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'login' %}" class="space-y-4">
+            {% csrf_token %}
+
+            <div>
+                <label for="username" class="block text-sm font-medium mb-1">Username</label>
+                <input
+                    type="text"
+                    name="username"
+                    id="username"
+                    required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+            </div>
+
+            <div>
+                <label for="password" class="block text-sm font-medium mb-1">Password</label>
+                <input
+                    type="password"
+                    name="password"
+                    id="password"
+                    required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+            </div>
+
+            <button
+                type="submit"
+                class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+                Login
+            </button>
+        </form>
+
+        <p class="mt-4 text-sm text-gray-500">
+            <a href="/" class="text-blue-600 hover:underline">← Back to homepage</a>
+        </p>
+    </div>
+</body>
+</html>
