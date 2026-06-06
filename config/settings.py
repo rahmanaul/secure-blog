@@ -48,6 +48,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'config.middleware.csp.CSPMiddleware',
+    'config.middleware.legacy_headers.LegacySecurityHeadersMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -116,3 +118,37 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+
+# Security settings (Issue #2)
+# https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
+
+# HTTPS redirect (disabled in tests/dev, enabled in production)
+SECURE_SSL_REDIRECT = False
+
+# HSTS - HTTP Strict Transport Security
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+# Browser XSS filter
+SECURE_BROWSER_XSS_FILTER = True
+
+# Content-Type nosniff
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Clickjacking protection
+X_FRAME_OPTIONS = 'DENY'
+
+# Secure cookies (HTTPS only)
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# Content Security Policy
+CSP_DEFAULT_SRC = "'self'"
+CSP_SCRIPT_SRC = "'self'"
+CSP_STYLE_SRC = "'self' 'unsafe-inline'"
+CSP_IMG_SRC = "'self' data:"
+CSP_OBJECT_SRC = "'none'"
+CSP_BASE_URI = "'self'"
+CSP_FORM_ACTION = "'self'"
